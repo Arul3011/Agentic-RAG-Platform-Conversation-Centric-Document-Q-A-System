@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    background-color: #0F1117;
+    color: #F0F2F8;
+  }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2A3A52; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3B4F6A; }
+}
+
+@layer utilities {
+  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: #2A3A52 transparent; }
+  .glass { background: rgba(22, 27, 39, 0.8); backdrop-filter: blur(12px); }
+  .glow-indigo { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+  .glow-emerald { box-shadow: 0 0 16px rgba(16, 185, 129, 0.15); }
+  .border-subtle { border-color: #1E2A3B; }
+  .shimmer-bg {
+    background: linear-gradient(90deg, #161B27 25%, #1E2A3B 50%, #161B27 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+}
