@@ -161,7 +161,8 @@ export function DocumentPanel({ conversationId, onClose }: Props) {
                   if (confirm(`Remove "${doc.file_name}" from this conversation?`))
                     del.mutate(doc.id);
                 }}
-                className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-600 hover:text-rose-400 transition-all"
+                aria-label={`Remove ${doc.file_name}`}
+                className="opacity-40 sm:opacity-0 sm:group-hover:opacity-100 p-2 sm:p-1 rounded text-slate-600 hover:text-rose-400 transition-all shrink-0"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>

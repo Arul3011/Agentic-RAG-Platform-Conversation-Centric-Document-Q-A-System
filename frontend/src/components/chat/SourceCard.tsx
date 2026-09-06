@@ -17,11 +17,11 @@ export function SourceCards({ sources }: Props) {
         {sources.map((src) => (
           <div
             key={src.chunk_id}
-            className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-base-800 border border-base-700 hover:border-indigo-500/40 hover:glow-indigo transition-all duration-200 group"
+            className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-base-800 border border-base-700 hover:border-indigo-500/40 hover:glow-indigo transition-all duration-200 group max-w-full"
           >
-            <span className="text-sm">📄</span>
+            <span className="text-sm shrink-0">📄</span>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-slate-300 truncate max-w-[140px]" title={src.document_name}>
+              <p className="text-xs font-medium text-slate-300 truncate max-w-[160px] sm:max-w-[140px]" title={src.document_name}>
                 {src.document_name}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">

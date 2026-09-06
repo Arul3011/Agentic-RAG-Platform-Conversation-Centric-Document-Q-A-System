@@ -1,4 +1,4 @@
-import { Plus, MessageSquare, Trash2 } from "lucide-react";
+import { Plus, MessageSquare, Trash2, X } from "lucide-react";
 import { useConversations, useCreateConversation, useDeleteConversation } from "../../hooks/useConversations";
 import { Spinner } from "../ui/Spinner";
 import { Button } from "../ui/Button";
@@ -7,9 +7,10 @@ import { formatRelativeTime, truncate } from "../../utils/format";
 interface Props {
   activeId: string | null;
   onSelect: (id: string | null) => void;
+  onClose?: () => void;
 }
 
-export function ConversationList({ activeId, onSelect }: Props) {
+export function ConversationList({ activeId, onSelect, onClose }: Props) {
   const { data: conversations, isLoading } = useConversations();
   const create = useCreateConversation();
   const del = useDeleteConversation();
@@ -29,16 +30,27 @@ export function ConversationList({ activeId, onSelect }: Props) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-4 py-4 border-b border-base-700">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-indigo-500/20 flex items-center justify-center">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-base-700 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-6 h-6 rounded-md bg-indigo-500/20 flex items-center justify-center shrink-0">
             <span className="text-indigo-400 text-xs font-bold">R</span>
           </div>
-          <span className="text-sm font-semibold text-white">Agentic RAG</span>
+          <span className="text-sm font-semibold text-white truncate">Agentic RAG</span>
         </div>
-        <Button variant="primary" size="sm" onClick={handleNew} loading={create.isPending}>
-          <Plus className="w-3.5 h-3.5" />New
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          {onClose && (
+            <button
+              onClick={onClose}
+              aria-label="Close menu"
+              className="lg:hidden p-2 rounded-lg text-slate-500 hover:text-white hover:bg-base-800 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+          <Button variant="primary" size="sm" onClick={handleNew} loading={create.isPending}>
+            <Plus className="w-3.5 h-3.5" />New
+          </Button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto scrollbar-thin py-2">
@@ -73,9 +85,10 @@ export function ConversationList({ activeId, onSelect }: Props) {
                 </div>
                 <button
                   onClick={(e) => handleDelete(e, conv.id)}
-                  className="opacity-0 group-hover:opacity-100 p-1 rounded text-base-500 hover:text-rose-400 transition-all"
+                  aria-label="Delete conversation"
+                  className="opacity-40 sm:opacity-0 sm:group-hover:opacity-100 p-2 sm:p-1 rounded text-base-500 hover:text-rose-400 transition-all"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                 </button>
               </div>
             );

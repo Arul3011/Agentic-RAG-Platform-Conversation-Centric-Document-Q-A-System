@@ -40,15 +40,16 @@ export function ChatInput({ onSend, onUploadClick, disabled, loading }: Props) {
   const canSend = value.trim().length > 0 && !loading && !disabled;
 
   return (
-    <div className="border-t border-base-700 px-4 py-3 bg-base-900">
-      <div className={`flex items-end gap-2 bg-base-800 border rounded-2xl px-3 py-2 transition-colors duration-150 ${
+    <div className="border-t border-base-700 px-3 sm:px-4 py-2.5 sm:py-3 bg-base-900">
+      <div className={`flex items-end gap-1.5 sm:gap-2 bg-base-800 border rounded-2xl px-2 sm:px-3 py-2 transition-colors duration-150 ${
         disabled ? "border-base-700 opacity-60" : "border-base-600 focus-within:border-indigo-500/50"
       }`}>
         <button
           onClick={onUploadClick}
           disabled={disabled}
           title="Upload document"
-          className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 transition-colors disabled:opacity-40"
+          aria-label="Upload document"
+          className="p-2 sm:p-1.5 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 transition-colors disabled:opacity-40 shrink-0"
         >
           <Paperclip className="w-4 h-4" />
         </button>
@@ -67,7 +68,8 @@ export function ChatInput({ onSend, onUploadClick, disabled, loading }: Props) {
         <button
           onClick={handleSend}
           disabled={!canSend}
-          className={`p-1.5 rounded-lg transition-all duration-150 ${
+          aria-label="Send message"
+          className={`p-2 sm:p-1.5 rounded-lg transition-all duration-150 shrink-0 ${
             canSend
               ? "bg-indigo-500 text-white hover:bg-indigo-600 shadow-lg shadow-indigo-500/30"
               : "text-slate-600"
@@ -76,7 +78,7 @@ export function ChatInput({ onSend, onUploadClick, disabled, loading }: Props) {
           {loading ? <Spinner size="sm" className="border-t-white" /> : <Send className="w-4 h-4" />}
         </button>
       </div>
-      <p className="text-xs text-slate-700 mt-2 text-center">
+      <p className="text-xs text-slate-700 mt-2 text-center hidden sm:block">
         Enter to send · Shift+Enter for new line · Attach documents with 📎
       </p>
     </div>

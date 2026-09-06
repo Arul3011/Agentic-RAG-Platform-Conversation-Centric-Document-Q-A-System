@@ -16,6 +16,8 @@
 }
 
 @layer utilities {
+  .app-height { height: 100vh; }
+  @supports (height: 100dvh) { .app-height { height: 100dvh; } }
   .scrollbar-thin { scrollbar-width: thin; scrollbar-color: #2A3A52 transparent; }
   .glass { background: rgba(22, 27, 39, 0.8); backdrop-filter: blur(12px); }
   .glow-indigo { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
