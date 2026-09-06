@@ -41,9 +41,20 @@ export interface Document {
   file_type: string;
   file_size: number;
   status: "pending" | "processing" | "ready" | "error";
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> & {
+    processing_progress?: ProcessingProgress;
+  };
   created_at: string;
   updated_at: string;
+}
+
+export interface ProcessingProgress {
+  status: string;
+  step: string;
+  percent: number;
+  chunks_processed?: number | null;
+  chunks_total?: number | null;
+  step_percent?: number | null;
 }
 
 export interface MessageWithSources extends Message {

@@ -4,7 +4,7 @@ import { FileText, Upload, Trash2, CheckCircle, AlertCircle, Loader2, X } from "
 import { useDocuments, useUploadDocument, useDeleteDocument } from "../../hooks/useDocuments";
 import { Spinner } from "../ui/Spinner";
 import { Button } from "../ui/Button";
-import { formatFileSize, formatRelativeTime, fileTypeIcon } from "../../utils/format";
+import { formatFileSize, formatRelativeTime, fileTypeIcon, processingStepLabel, processingDetail, estimateRemaining } from "../../utils/format";
 import type { Document } from "../../types";
 
 interface Props { conversationId: string; onClose?: () => void }
@@ -25,6 +25,38 @@ function StatusLabel({ status }: { status: Document["status"] }) {
     pending: "text-slate-400",
   };
   return <span className={`text-xs font-medium ${map[status]}`}>{status}</span>;
+}
+
+function ProcessingProgress({ doc }: { doc: Document }) {
+  const prog = doc.metadata?.processing_progress;
+  const percent = prog?.percent ?? 0;
+  const clamped = Math.max(0, Math.min(100, percent));
+  const step = prog?.step ?? "Processing";
+  const detail = processingDetail(prog?.chunks_processed, prog?.chunks_total);
+  const remaining = estimateRemaining(doc.created_at, clamped);
+
+  return (
+    <div className="mt-1.5 space-y-1">
+      <div className="flex items-center gap-1.5 text-xs">
+        <Loader2 className="w-3 h-3 text-indigo-400 animate-spin shrink-0" />
+        <span className="text-indigo-400 font-medium truncate">{processingStepLabel(step)}</span>
+        <span className="text-slate-500 ml-auto shrink-0">{Math.round(clamped)}%</span>
+      </div>
+      <div className="w-full bg-base-700 rounded-full h-1.5 overflow-hidden">
+        <div
+          className="bg-indigo-500 h-full rounded-full transition-all duration-500"
+          style={{ width: `${clamped}%` }}
+        />
+      </div>
+      {(detail || remaining) && (
+        <p className="text-xs text-slate-500 truncate">
+          {detail}
+          {detail && remaining ? " · " : ""}
+          {remaining && `${remaining} remaining`}
+        </p>
+      )}
+    </div>
+  );
 }
 
 export function DocumentPanel({ conversationId, onClose }: Props) {
@@ -148,13 +180,19 @@ export function DocumentPanel({ conversationId, onClose }: Props) {
                 <p className="text-xs font-medium text-slate-300 truncate" title={doc.file_name}>
                   {doc.file_name}
                 </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <StatusIcon status={doc.status} />
-                  <StatusLabel status={doc.status} />
-                  <span className="text-xs text-slate-600">·</span>
-                  <span className="text-xs text-slate-600">{formatFileSize(doc.file_size)}</span>
-                </div>
-                <p className="text-xs text-slate-600 mt-0.5">{formatRelativeTime(doc.created_at)}</p>
+                {doc.status === "processing" || doc.status === "pending" ? (
+                  <ProcessingProgress doc={doc} />
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2 mt-1">
+                      <StatusIcon status={doc.status} />
+                      <StatusLabel status={doc.status} />
+                      <span className="text-xs text-slate-600">·</span>
+                      <span className="text-xs text-slate-600">{formatFileSize(doc.file_size)}</span>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-0.5">{formatRelativeTime(doc.created_at)}</p>
+                  </>
+                )}
               </div>
               <button
                 onClick={() => {

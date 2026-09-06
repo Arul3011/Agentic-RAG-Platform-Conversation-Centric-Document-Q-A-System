@@ -53,3 +53,42 @@ export function fileTypeIcon(fileType: string): string {
   };
   return map[fileType] ?? "📁";
 }
+
+export function processingStepLabel(step: string): string {
+  const map: Record<string, string> = {
+    "Saving file": "Uploading",
+    "Extracting text": "Extracting text",
+    "Extracting metadata": "Analyzing content",
+    "Chunking content": "Chunking content",
+    "Preparing chunks": "Building chunks",
+    "Embedding content": "Embedding content",
+    "Storing chunks": "Storing chunks",
+    Complete: "Complete",
+    Failed: "Failed",
+  };
+  return map[step] ?? step;
+}
+
+export function processingDetail(
+  chunksProcessed?: number | null,
+  chunksTotal?: number | null
+): string | null {
+  if (chunksTotal && chunksProcessed != null) {
+    return `${chunksProcessed} of ${chunksTotal} chunks`;
+  }
+  return null;
+}
+
+export function estimateRemaining(
+  createdAt: string,
+  percent: number
+): string | null {
+  if (!percent || percent >= 100) return null;
+  const elapsed = Date.now() - new Date(createdAt).getTime();
+  if (elapsed <= 0) return null;
+  const total = elapsed / (percent / 100);
+  const remaining = total - elapsed;
+  const secs = Math.max(1, Math.round(remaining / 1000));
+  if (secs < 60) return `~${secs}s`;
+  return `~${Math.floor(secs / 60)}m${secs % 60 ? ` ${secs % 60}s` : ""}`;
+}

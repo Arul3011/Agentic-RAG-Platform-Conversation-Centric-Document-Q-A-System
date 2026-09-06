@@ -9,6 +9,13 @@ export const documentsApi = {
     return data;
   },
 
+  get: async (conversationId: string, documentId: string): Promise<Document> => {
+    const { data } = await apiClient.get(
+      `/conversations/${conversationId}/documents/${documentId}`
+    );
+    return data;
+  },
+
   upload: async (
     conversationId: string,
     file: File,

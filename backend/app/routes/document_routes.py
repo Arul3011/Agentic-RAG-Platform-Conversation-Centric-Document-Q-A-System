@@ -10,16 +10,7 @@ from app.services.conversation_service import conversation_service
 router = APIRouter(prefix="/conversations", tags=["documents"])
 
 
-@router.post("/{conversation_id}/documents", response_model=DocumentResponse, status_code=201)
-def upload_document(
-    conversation_id: str,
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-):
-    conv = conversation_service.get(db, conversation_id)
-    if not conv:
-        raise HTTPException(status_code=404, detail="Conversation not found")
-    doc = document_service.upload_and_process(db, conversation_id, file)
+def _build_response(doc) -> DocumentResponse:
     return DocumentResponse(
         id=doc.id,
         conversation_id=doc.conversation_id,
@@ -33,23 +24,31 @@ def upload_document(
     )
 
 
+@router.post("/{conversation_id}/documents", response_model=DocumentResponse, status_code=201)
+def upload_document(
+    conversation_id: str,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    conv = conversation_service.get(db, conversation_id)
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    doc = document_service.start_processing(db, conversation_id, file)
+    return _build_response(doc)
+
+
 @router.get("/{conversation_id}/documents", response_model=List[DocumentResponse])
 def list_documents(conversation_id: str, db: Session = Depends(get_db)):
     docs = document_repo.list_by_conversation(db, conversation_id)
-    return [
-        DocumentResponse(
-            id=d.id,
-            conversation_id=d.conversation_id,
-            file_name=d.file_name,
-            file_type=d.file_type,
-            file_size=d.file_size,
-            status=d.status,
-            metadata=d.metadata_ or {},
-            created_at=d.created_at,
-            updated_at=d.updated_at,
-        )
-        for d in docs
-    ]
+    return [_build_response(d) for d in docs]
+
+
+@router.get("/{conversation_id}/documents/{document_id}", response_model=DocumentResponse)
+def get_document(conversation_id: str, document_id: str, db: Session = Depends(get_db)):
+    doc = document_repo.get(db, document_id)
+    if not doc or doc.conversation_id != conversation_id:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return _build_response(doc)
 
 
 @router.delete("/documents/{document_id}", status_code=204)
