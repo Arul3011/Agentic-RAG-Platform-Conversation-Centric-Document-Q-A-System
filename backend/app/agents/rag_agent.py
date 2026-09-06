@@ -84,7 +84,7 @@ def _generate_answer(state: AgentState) -> AgentState:
 def build_rag_graph() -> StateGraph:
     graph = StateGraph(AgentState)
     graph.add_node("decide", _make_retrieval_decision)
-    graph.add_node("retrieve", _no_retrieval_node)   # Populated externally
+    graph.add_node("retrieve", _no_retrieval_node)   
     graph.add_node("generate", _generate_answer)
 
     graph.set_entry_point("decide")
